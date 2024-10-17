@@ -1,0 +1,3 @@
+[submodule "IogStack"]
+	path = IogStack
+	url = https://github.com/mikhio/IogStack

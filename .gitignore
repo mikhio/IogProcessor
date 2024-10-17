@@ -1,0 +1,4 @@
+*.swp
+log
+cpp_cache/*
+build/*
