@@ -8,10 +8,13 @@ INCLUDE_PATH := ./include
 STACK_SRC    := ./IogStack/src
 STACK_INC    := ./IogStack/include
 
-BUILD_DIR    := ./build
-APP_PATH     := ./build/$(PROJECT_NAME)
-CCH_PATH     := ./cpp_cache
+COMPILER_NAME := iog_compiler
+EXECUTOR_NAME := iog_executor
 
+BUILD_DIR     := ./build
+COMPILER_PATH := ./build/$(COMPILER_NAME)
+EXECUTOR_PATH := ./build/$(IOG_EXECUTOR)
+CCH_PATH      := ./cpp_cache
 
 
 SOURCES := $(wildcard $(SRC_PATH)/*.cpp) $(wildcard $(STACK_SRC)/*.cpp)
@@ -32,9 +35,13 @@ CXX_FLAGS := -D _DEBUG -ggdb3 -std=c++17 -O0 -Wall -Wextra -Weffc++ -Waggressive
    -Wstack-usage=8192 -fPIE -Werror=vla -pedantic -fsanitize=address,alignment,bool,bounds,enum,float-cast-overflow,float-divide-by-zero,integer-divide-by-zero,nonnull-attribute,null,return,returns-nonnull-attribute,shift,signed-integer-overflow,undefined,unreachable,vla-bound,vptr -fproc-stat-report=log
 
 # Compiling and linking
-$(APP_PATH): $(OBJECTS) 
+$(COMPILER_PATH): $(OBJECTS) $(CCH_PATH)/$(COMPILER_NAME).o
 	@mkdir -p $(@D)
-	$(CXX) $(CXX_FLAGS) $^ -o $(APP_PATH)
+	$(CXX) $(CXX_FLAGS) $^ -o $(COMPILER_PATH)
+
+$(EXECUTOR_PATH): $(OBJECTS) $(CCH_PATH)/$(EXECUTOR_NAME).o
+	@mkdir -p $(@D)
+	$(CXX) $(CXX_FLAGS) $^ -o $(EXECUTOR_PATH)
 
 $(CCH_PATH)/$(SRC_PATH)/%.o: $(SRC_PATH)/%.cpp Makefile
 	@mkdir -p $(@D)
@@ -44,18 +51,21 @@ $(CCH_PATH)/$(STACK_SRC)/%.o: $(STACK_SRC)/%.cpp Makefile
 	@mkdir -p $(@D)
 	$(CXX) -I$(STACK_INC) -c $< -o $@ 
 
+$(CCH_PATH)/$(COMPILER_NAME).o: $(COMPILER_NAME).cpp Makefile
+	@mkdir -p $(@D)
+	$(CXX) -I$(STACK_INC) -I$(INCLUDE_PATH) -c $< -o $@ 
+
+$(CCH_PATH)/$(EXECUTOR_NAME).o: $(EXECUTOR_NAME).cpp Makefile
+	@mkdir -p $(@D)
+	$(CXX) -I$(STACK_INC) -I$(INCLUDE_PATH) -c $< -o $@ 
 
 # Simplifications
 .PHONY: build
-build: $(APP_PATH)
+build: $(COMPILER_PATH) $(EXECUTOR_PATH)
 
 .PHONY: clean
 clean:
 	rm -rf $(CCH_PATH) $(BUILD_DIR)
-
-.PHONY: run
-run:
-	$(APP_PATH)
 
 .PHONY: docs
 docs: Doxyfile
@@ -65,5 +75,4 @@ docs: Doxyfile
 all:
 	make clean
 	make build
-	make run
 

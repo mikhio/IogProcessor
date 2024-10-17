@@ -13,8 +13,9 @@ enum SpuReturnCode {
   ERR_MANY_ARGUMENTS   = 1,
   ERR_CANT_OPEN_FILE   = 2,
   ERR_CANT_CODE_APPEND = 3,
+  ERR_CANT_SAVE_CODE   = 4,
 
-  NR_SPU_RETURN_CODE   = 4,
+  NR_SPU_RETURN_CODE   = 5,
 };
 
 enum SpuCmdId {
@@ -138,6 +139,25 @@ SpuReturnCode spu_code_free (SpuCode_t *code) {
   return SPU_OK;
 }
 
+SpuReturnCode spu_code_save (const SpuCode_t *code, const char *filename) {
+  IOG_ASSERT(code);
+  IOG_ASSERT(filename);
+
+  FILE *binfile = fopen(filename, "wb");
+
+  if (!binfile) {
+    fprintf(stderr, RED("ERROR: Can't open binary file %s\n"), filename);
+    return ERR_CANT_SAVE_CODE;
+  }
+
+  fwrite(&code->bufSize, sizeof(size_t), 1, binfile);
+  fwrite(code->buffer,  sizeof(int), code->bufSize, binfile);
+
+  fclose(binfile);
+
+  return SPU_OK;
+}
+
 SpuReturnCode spu_run (SpuCode_t *code) {
   return SPU_OK;
 }
@@ -154,7 +174,7 @@ int main (int argc, const char *argv[]) {
     fprintf(stderr, BLACK("code.buffer[%lu] = %d\n"), i, code.buffer[i]);
   }
 
-  spu_code_save(code, "my.out");
+  spu_code_save(&code, "tests/my.bin");
 
   spu_code_free(&code);
 
