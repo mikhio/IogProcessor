@@ -122,7 +122,6 @@ SpuReturnCode spu_compile_code (const char *filename, SpuCode_t *code) {
 
   fclose(codefile);
 
-  spu_code_append(code, -1);
   spu_code_allocate(code, code->bufSize);
 
   return SPU_OK;
@@ -155,10 +154,6 @@ SpuReturnCode spu_code_save (const SpuCode_t *code, const char *filename) {
 
   fclose(binfile);
 
-  return SPU_OK;
-}
-
-SpuReturnCode spu_run (SpuCode_t *code) {
   return SPU_OK;
 }
 

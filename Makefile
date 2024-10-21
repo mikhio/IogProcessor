@@ -13,7 +13,7 @@ EXECUTOR_NAME := iog_executor
 
 BUILD_DIR     := ./build
 COMPILER_PATH := ./build/$(COMPILER_NAME)
-EXECUTOR_PATH := ./build/$(IOG_EXECUTOR)
+EXECUTOR_PATH := ./build/$(EXECUTOR_NAME)
 CCH_PATH      := ./cpp_cache
 
 
@@ -35,6 +35,15 @@ CXX_FLAGS := -D _DEBUG -ggdb3 -std=c++17 -O0 -Wall -Wextra -Weffc++ -Waggressive
    -Wstack-usage=8192 -fPIE -Werror=vla -pedantic -fsanitize=address,alignment,bool,bounds,enum,float-cast-overflow,float-divide-by-zero,integer-divide-by-zero,nonnull-attribute,null,return,returns-nonnull-attribute,shift,signed-integer-overflow,undefined,unreachable,vla-bound,vptr -fproc-stat-report=log
 
 # Compiling and linking
+.PHONY: build
+build: $(COMPILER_PATH) $(EXECUTOR_PATH)
+
+.PHONY: buildCom
+buildCom: $(COMPILER_PATH)
+
+.PHONY: buildExe
+buildExe: $(EXECUTOR_PATH)
+
 $(COMPILER_PATH): $(OBJECTS) $(CCH_PATH)/$(COMPILER_NAME).o
 	@mkdir -p $(@D)
 	$(CXX) $(CXX_FLAGS) $^ -o $(COMPILER_PATH)
