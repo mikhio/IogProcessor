@@ -1,4 +1,9 @@
-push 10
-push 20
+push 12
+pop ax 
+push 25
+pop bx
+pushr ax
+pushr bx
 add
 out
+hlt

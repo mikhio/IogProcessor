@@ -10,6 +10,7 @@
 #include <string.h>
 #include <stdlib.h>
 
+
 SpuReturnCode spu_bin_load(const char *filename, SpuBin_t *binCode) {
   IOG_ASSERT(filename);
   IOG_ASSERT(binCode);
@@ -51,7 +52,7 @@ SpuReturnCode spu_bin_read_cmd(SpuBin_t *binCode, SpuCmdId_t *curCmd, int *value
   *curCmd = (SpuCmdId_t) binCode->code[binCode->ip];
   binCode->ip++;
 
-  if (*curCmd == SPU_PUSH_ID) {
+  if ((*curCmd == SPU_PUSH_ID) || (*curCmd == SPU_POP_ID) || (*curCmd == SPU_PUSHR_ID)) {
     *value = binCode->code[binCode->ip];
       binCode->ip++;
   } else {
@@ -84,7 +85,16 @@ SpuReturnCode spu_bin_run (SpuBin_t *binCode) {
       case SPU_PUSH_ID: {
         iog_stack_push(&binCode->stack, cmdValue);
 
-        cmdValue = 0;
+        break;
+      }
+      case SPU_PUSHR_ID: {
+        iog_stack_push(&binCode->stack, binCode->regs[cmdValue]);
+
+        break;
+      }
+      case SPU_POP_ID: {
+        iog_stack_pop(&binCode->stack, binCode->regs + cmdValue);
+
         break;
       }
       case SPU_ADD_ID: {

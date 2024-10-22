@@ -8,8 +8,9 @@ enum SpuReturnCode {
   ERR_CANT_OPEN_FILE   = 3,
   ERR_CANT_CODE_APPEND = 4,
   ERR_CANT_SAVE_CODE   = 5,
+  ERR_NOT_REGISTER     = 6,
 
-  NR_SPU_RETURN_CODE   = 6,
+  NR_SPU_RETURN_CODE   = 7,
 };
 
 

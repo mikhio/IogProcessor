@@ -5,11 +5,14 @@
 #include "spu_cmd_ids.h"
 #include "iog_stack.h"
 
+const size_t SPU_REGS_NUM = 10;
+
 struct SpuBin_t {
   IogStack_t stack;
   int *code;
   size_t ip;
   size_t size;
+  int regs[SPU_REGS_NUM];
 };
 
 SpuReturnCode spu_bin_load     (const char *filename, SpuBin_t *binCode);

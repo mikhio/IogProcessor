@@ -69,10 +69,44 @@ SpuReturnCode spu_compile_code (const char *filename, SpuCode_t *code) {
 
       spu_code_append(code, (int) SPU_PUSH_ID);
       spu_code_append(code, num);
+    } else if (strcmp(cmd, "pop") == 0) {
+      char reg_name[10];
+
+      if (fscanf(codefile, "%s", reg_name) == 0) {
+        fprintf(stderr, RED("SyntaxError: Can't find reginster after pop\n"));
+        break;
+      }
+
+      int num = 0;
+      if (convert_reg_name_to_num(reg_name, &num) != SPU_OK) {
+        fprintf(stderr, RED("SyntaxError: Can't read reginster after pop\n"));
+        break;
+      }
+
+      spu_code_append(code, (int) SPU_POP_ID);
+      spu_code_append(code, num);
+    } else if (strcmp(cmd, "pushr") == 0) {
+      char reg_name[10];
+
+      if (fscanf(codefile, "%s", reg_name) == 0) {
+        fprintf(stderr, RED("SyntaxError: Can't find reginster after pushr\n"));
+        break;
+      }
+
+      int num = 0;
+      if (convert_reg_name_to_num(reg_name, &num) != SPU_OK) {
+        fprintf(stderr, RED("SyntaxError: Can't read reginster after pushr\n"));
+        break;
+      }
+
+      spu_code_append(code, (int) SPU_PUSHR_ID);
+      spu_code_append(code, num);
     } else if (strcmp(cmd, "add") == 0) {
       spu_code_append(code, (int) SPU_ADD_ID);
     } else if (strcmp(cmd, "out") == 0) {
       spu_code_append(code, (int) SPU_OUT_ID);
+    } else if (strcmp(cmd, "hlt") == 0) {
+      spu_code_append(code, (int) SPU_HLT_ID);
     } else {
       fprintf(stderr, RED("SyntaxError: Unknonw command %s\n"), cmd);
       break;
@@ -85,6 +119,7 @@ SpuReturnCode spu_compile_code (const char *filename, SpuCode_t *code) {
 
   return SPU_OK;
 }
+
 
 SpuReturnCode spu_code_free (SpuCode_t *code) {
   IOG_ASSERT(code);
@@ -112,6 +147,21 @@ SpuReturnCode spu_code_save (const SpuCode_t *code, const char *filename) {
   fwrite(code->buffer,  sizeof(int), code->bufSize, binfile);
 
   fclose(binfile);
+
+  return SPU_OK;
+}
+
+static SpuReturnCode convert_reg_name_to_num (char *reg_name, int *num) {
+  IOG_ASSERT(reg_name);
+  IOG_ASSERT(num);
+
+  if ( !((reg_name[0] >= 'a') && (reg_name[0] <= 'z') && (reg_name[1] == 'x')) ) {
+    fprintf(stderr, RED("Error: Unknown register name %s\n"), reg_name);
+    return ERR_NOT_REGISTER;
+  }
+
+
+  *num = (int) (reg_name[0] - 'a');
 
   return SPU_OK;
 }
