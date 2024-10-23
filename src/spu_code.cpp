@@ -46,7 +46,7 @@ SpuReturnCode spu_code_append(SpuCode_t *code, int value) {
 }
 
 
-SpuReturnCode spu_compile_code (const char *filename, SpuCode_t *code) {
+SpuReturnCode spu_code_compile (const char *filename, SpuCode_t *code) {
   IOG_ASSERT(filename);
   IOG_ASSERT(code);
 
@@ -103,6 +103,8 @@ SpuReturnCode spu_compile_code (const char *filename, SpuCode_t *code) {
       spu_code_append(code, num);
     } else if (strcmp(cmd, "add") == 0) {
       spu_code_append(code, (int) SPU_ADD_ID);
+    } else if (strcmp(cmd, "mul") == 0) {
+      spu_code_append(code, (int) SPU_MUL_ID);
     } else if (strcmp(cmd, "out") == 0) {
       spu_code_append(code, (int) SPU_OUT_ID);
     } else if (strcmp(cmd, "hlt") == 0) {
@@ -159,6 +161,35 @@ SpuReturnCode spu_code_save (const SpuCode_t *code, const char *filename) {
 
   fwrite(&code->bufSize, sizeof(size_t), 1, binfile);
   fwrite(code->buffer,  sizeof(int), code->bufSize, binfile);
+
+  fclose(binfile);
+
+  return SPU_OK;
+}
+
+SpuReturnCode spu_code_load (const char *filename, SpuCode_t *code) {
+  IOG_ASSERT(filename);
+  IOG_ASSERT(code);
+
+  FILE *binfile = fopen(filename, "rb");
+  
+  if (!binfile) {
+    fprintf(stderr, RED("ERROR: Can't open file %s\n"), filename);
+    return ERR_CANT_OPEN_FILE;
+  }
+
+
+  fread(&code->bufSize, sizeof(size_t), 1, binfile);
+
+  code->buffer = (int *)iog_recalloc(
+      code->buffer,
+      0,
+      code->bufSize,
+      sizeof(int)
+  );
+  
+  fread(code->buffer, sizeof(int), code->bufSize, binfile);
+
 
   fclose(binfile);
 

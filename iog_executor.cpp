@@ -1,7 +1,7 @@
 #include "iog_assert.h"
 #include "cli_colors.h"
-#include "spu_binary_code.h"
-#include "spu_return_codes.h"
+
+#include "spu.h"
 
 const char *DEFAULT_TEST_FILE = "tests/my.bin";
 
@@ -28,13 +28,13 @@ int main (int argc, const char *argv[]) {
   const char *filename = NULL;
   spu_handle_args(argc, argv, &filename);
 
-  SpuBin_t binCode = {};
+  Spu_t proc = {};
 
-  spu_bin_load(filename, &binCode);
+  spu_code_load(filename, &proc.code);
 
-  spu_bin_run(&binCode);
+  spu_run(&proc);
 
-  spu_bin_free(&binCode);
+  spu_free(&proc);
 
   return 0;
 }

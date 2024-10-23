@@ -16,10 +16,10 @@ SpuReturnCode spu_handle_args (int argc, const char *argv[], const char **filena
     return ERR_MANY_ARGUMENTS;
   }
 
-  if (argc <= 1) {
+  if (argc == 1) {
     *filename = DEFAULT_TEST_FILE;
   } else {
-    *filename = argv[argc-1];
+    *filename = argv[1];
   }
 
   return SPU_OK;
@@ -31,7 +31,7 @@ int main (int argc, const char *argv[]) {
 
   SpuCode_t code = {};
 
-  spu_compile_code(filename, &code);
+  spu_code_compile(filename, &code);
 
   for (size_t i = 0; i < code.bufCapacity; i++) {
     fprintf(stderr, BLACK("code.buffer[%lu] = %d\n"), i, code.buffer[i]);

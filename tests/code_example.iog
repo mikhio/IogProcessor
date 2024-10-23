@@ -6,4 +6,7 @@ pushr ax
 pushr bx
 add
 out
+pushr ax
+mul
+out
 hlt
