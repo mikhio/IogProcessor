@@ -1,4 +1,5 @@
 #include "spu_code.h"
+#include "spu_text_reader.h"
 #include "spu_return_codes.h"
 #include "spu_cmd_ids.h"
 #include "cli_colors.h"
@@ -49,6 +50,10 @@ SpuReturnCode spu_code_append(SpuCode_t *code, int value) {
 SpuReturnCode spu_code_compile (const char *filename, SpuCode_t *code) {
   IOG_ASSERT(filename);
   IOG_ASSERT(code);
+
+  SpuText_t text = {};
+
+  spu_text_read(filename, &text);
 
   FILE *codefile = fopen(filename, "rb");
 

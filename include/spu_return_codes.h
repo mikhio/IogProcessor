@@ -10,7 +10,14 @@ enum SpuReturnCode {
   ERR_CANT_SAVE_CODE   = 5,
   ERR_NOT_REGISTER     = 6,
 
-  NR_SPU_RETURN_CODE   = 7,
+  ERR_CANT_ALLOCATE    = 7,
+  ERR_CANT_READ_FILE   = 8,
+  ERR_CANT_SPLIT       = 9,
+  ERR_NULL_BUFFER      = 10,
+  ERR_NO_OUTPUT_FILE   = 11,
+  ERR_CANT_FILL_BUFFER = 12,
+
+  NR_SPU_RETURN_CODE   = 13,
 };
 
 
