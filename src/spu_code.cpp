@@ -107,6 +107,20 @@ SpuReturnCode spu_compile_code (const char *filename, SpuCode_t *code) {
       spu_code_append(code, (int) SPU_OUT_ID);
     } else if (strcmp(cmd, "hlt") == 0) {
       spu_code_append(code, (int) SPU_HLT_ID);
+    } else if (strcmp(cmd, "jmp") == 0) {
+      spu_code_append(code, (int) SPU_JMP_ID);
+    } else if (strcmp(cmd, "ja") == 0) {
+      spu_code_append(code, (int) SPU_JA_ID);
+    } else if (strcmp(cmd, "jae") == 0) {
+      spu_code_append(code, (int) SPU_JAE_ID);
+    } else if (strcmp(cmd, "jb") == 0) {
+      spu_code_append(code, (int) SPU_JB_ID);
+    } else if (strcmp(cmd, "jbe") == 0) {
+      spu_code_append(code, (int) SPU_JBE_ID);
+    } else if (strcmp(cmd, "je") == 0) {
+      spu_code_append(code, (int) SPU_JE_ID);
+    } else if (strcmp(cmd, "jne") == 0) {
+      spu_code_append(code, (int) SPU_JNE_ID);
     } else {
       fprintf(stderr, RED("SyntaxError: Unknonw command %s\n"), cmd);
       break;

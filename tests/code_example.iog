@@ -1,7 +1,7 @@
-push 12
-pop ax 
-push 25
-pop bx
+push  12
+pop   ax 
+push  25
+pop   bx
 pushr ax
 pushr bx
 add
