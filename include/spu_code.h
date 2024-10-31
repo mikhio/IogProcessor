@@ -2,6 +2,7 @@
 #define SPU_CODE_H
 
 #include "spu_return_codes.h"
+#include "spu_text_reader.h"
 #include <stdlib.h>
 
 const int CAPACITY_CHUNK = 100;
@@ -25,5 +26,8 @@ SpuReturnCode  spu_code_allocate (SpuCode_t *code, size_t newCapacity);
 SpuReturnCode  spu_code_free     (SpuCode_t *code);
 
 static SpuReturnCode convert_reg_name_to_num (char *reg_name, int *num);
+
+static SpuReturnCode handle_push_args (StrLine *line, int *num);
+static SpuReturnCode handle_pop_args  (StrLine *line, int *num);
 
 #endif // SPU_CODE_H

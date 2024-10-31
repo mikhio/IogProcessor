@@ -2,11 +2,12 @@ push  12
 pop   ax 
 push  25
 pop   bx
-pushr ax
-pushr bx
+push ax
+push bx
 add
 out
-pushr ax
+
+push ax
 mul
 out
 hlt

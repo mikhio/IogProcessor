@@ -23,7 +23,7 @@ SpuReturnCode spu_code_allocate (SpuCode_t *code, size_t newCapacity) {
   );
 
   if (tmp_ptr == NULL) {
-    fprintf(stderr, RED("ERROR: Can't recallocate code buffer!"));
+    fprintf(stderr, RED("ERROR: Can't recallocate code buffer!\n"));
     return ERR_CANT_CODE_APPEND;
   }
   
@@ -55,56 +55,28 @@ SpuReturnCode spu_code_compile (const char *filename, SpuCode_t *code) {
 
   spu_text_read(filename, &text);
 
-  FILE *codefile = fopen(filename, "rb");
+  for (int line = 0; line < text.linesSize; line++) {
+    fprintf(stderr, BLUE("[PROCESSING] ") "'%s'\n", text.lines[line].line);
+    
+    char cmd[100] = {};
+    int num = 0;
 
-  if (!codefile) {
-    fprintf(stderr, RED("ERROR: Can't open file with code!\n"));
-    return ERR_CANT_OPEN_FILE;
-  }
+    if (sscanf(text.lines[line].line, "%s", cmd) == 0) {
+      fprintf(stderr, RED("ReadingError: beaten line \n"));
+    } else if (strcmp(cmd, "push") == 0) {
+      SpuReturnCode argType = handle_push_args(&text.lines[line], &num);
 
-  char cmd[100] = {};
-
-  while (fscanf(codefile, "%s", cmd) != EOF) {
-    if (strcmp(cmd, "push") == 0) {
-      int num = 0;
-      if (fscanf(codefile, "%d", &num) == 0) {
-        fprintf(stderr, RED("SyntaxError: not number after push\n"));
-        break;
+      if (argType == SPU_REG_TYPE) {
+        spu_code_append(code, (int) SPU_PUSHR_ID);
+      } else if (argType == SPU_NUM_TYPE) {
+        spu_code_append(code, (int) SPU_PUSH_ID);
       }
 
-      spu_code_append(code, (int) SPU_PUSH_ID);
       spu_code_append(code, num);
     } else if (strcmp(cmd, "pop") == 0) {
-      char reg_name[10];
-
-      if (fscanf(codefile, "%s", reg_name) == 0) {
-        fprintf(stderr, RED("SyntaxError: Can't find reginster after pop\n"));
-        break;
-      }
-
-      int num = 0;
-      if (convert_reg_name_to_num(reg_name, &num) != SPU_OK) {
-        fprintf(stderr, RED("SyntaxError: Can't read reginster after pop\n"));
-        break;
-      }
+      handle_pop_args(&text.lines[line], &num);
 
       spu_code_append(code, (int) SPU_POP_ID);
-      spu_code_append(code, num);
-    } else if (strcmp(cmd, "pushr") == 0) {
-      char reg_name[10];
-
-      if (fscanf(codefile, "%s", reg_name) == 0) {
-        fprintf(stderr, RED("SyntaxError: Can't find reginster after pushr\n"));
-        break;
-      }
-
-      int num = 0;
-      if (convert_reg_name_to_num(reg_name, &num) != SPU_OK) {
-        fprintf(stderr, RED("SyntaxError: Can't read reginster after pushr\n"));
-        break;
-      }
-
-      spu_code_append(code, (int) SPU_PUSHR_ID);
       spu_code_append(code, num);
     } else if (strcmp(cmd, "add") == 0) {
       spu_code_append(code, (int) SPU_ADD_ID);
@@ -128,15 +100,57 @@ SpuReturnCode spu_code_compile (const char *filename, SpuCode_t *code) {
       spu_code_append(code, (int) SPU_JE_ID);
     } else if (strcmp(cmd, "jne") == 0) {
       spu_code_append(code, (int) SPU_JNE_ID);
+    } else if (strcmp(cmd, "") == 0) {
+      continue;
     } else {
-      fprintf(stderr, RED("SyntaxError: Unknonw command %s\n"), cmd);
+      fprintf(stderr, RED("SyntaxError: Unknonw command '%s'\n"), cmd);
       break;
     }
+    
   }
 
-  fclose(codefile);
+  spu_text_free(&text);
 
   spu_code_allocate(code, code->bufSize);
+
+  return SPU_OK;
+}
+
+static SpuReturnCode handle_push_args (StrLine *line, int *num) {
+  IOG_ASSERT(line);
+  IOG_ASSERT(num);
+
+  char reg_name[10];
+  char cmd[10];
+
+  if (sscanf(line->line, "%s %d", cmd, num) == 2) {
+    return SPU_NUM_TYPE;
+  } else if (sscanf(line->line, "%s %s", cmd, reg_name) == 2) {
+      if (convert_reg_name_to_num(reg_name, num) == SPU_OK)
+        return SPU_REG_TYPE;
+  }
+  
+  fprintf(stderr, RED("SyntaxError: neither number nor register name after push\n"));
+
+  return ERR_CANT_HANDLE_ARG;
+}
+
+static SpuReturnCode handle_pop_args (StrLine *line, int *num) {
+  IOG_ASSERT(line);
+  IOG_ASSERT(num);
+
+  char reg_name[10];
+  char cmd[10];
+
+  if (sscanf(line->line, "%s %s", cmd, reg_name) == 1) {
+    fprintf(stderr, RED("SyntaxError: Can't find register after pop\n"));
+    return ERR_CANT_HANDLE_ARG;
+  }
+
+  if (convert_reg_name_to_num(reg_name, num) != SPU_OK) {
+    fprintf(stderr, RED("SyntaxError: Can't read register after pop\n"));
+    return ERR_CANT_HANDLE_ARG;
+  }
 
   return SPU_OK;
 }
