@@ -53,6 +53,11 @@ SpuReturnCode spu_run (Spu_t *proc) {
 
         break;
       }
+      case GET_CMD_CODE(SPU_DATA_TYPE, SPU_JMP_ID): {
+        proc->ip = cmdValue;
+
+        break;
+      }
       case GET_CMD_CODE(SPU_NONE_ARG_TYPE, SPU_ADD_ID): {
         int firstValue = 0, secondValue = 0;
 

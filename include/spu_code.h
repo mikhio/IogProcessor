@@ -30,6 +30,6 @@ SpuReturnCode  spu_code_free     (SpuCode_t *code);
 static SpuReturnCode detectAllLabels (const SpuText_t *text, SpuLabels_t *labels);
 
 static SpuReturnCode checkLabelName (char *word);
-static SpuReturnCode checkCmdName   (char *word);
+static SpuReturnCode checkCmdName   (char *word, int *cmdArgsNum);
 
 #endif // SPU_CODE_H

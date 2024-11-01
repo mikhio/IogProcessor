@@ -188,10 +188,12 @@ static SpuReturnCode detectAllLabels (const SpuText_t *text, SpuLabels_t *labels
 
   for (size_t line = 0; line < text->linesSize; line++) {
     if (sscanf(text->lines[line].line, "%s", word) > 0) {
+      int cmdArgsNum = 0;
+
       if (checkLabelName(word) == SPU_OK) {
         spu_labels_append(labels, word, cmdCount);
-      } else if (checkCmdName(word) == 0) {
-        cmdCount++;
+      } else if (checkCmdName(word, &cmdArgsNum) == SPU_OK) {
+        cmdCount += 1 + cmdArgsNum;
       }
     }
   }
@@ -213,12 +215,14 @@ static SpuReturnCode checkLabelName (char *word) {
   return ERR_INCORRECT;
 }
 
-static SpuReturnCode checkCmdName (char *word) {
+static SpuReturnCode checkCmdName (char *word, int *cmdArgsNum) {
   IOG_ASSERT(word);
 
   for (size_t i = 0; i < SPU_CMDS_AMOUNT; i++) {
-    if (strcmp(word, SPU_CMDS[i].name) == 0)
+    if (strcmp(word, SPU_CMDS[i].name) == 0) {
+      *cmdArgsNum = SPU_CMDS[i].argsNum;
       return SPU_OK;
+    }
   }
 
   return ERR_INCORRECT;

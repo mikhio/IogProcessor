@@ -1,5 +1,6 @@
 push  12
 pop   ax 
+jmp start:
 push  25
 pop   bx
 push ax
@@ -9,7 +10,5 @@ out
 
 start:
 push ax
-mul
 out
-jmp start:
 hlt
