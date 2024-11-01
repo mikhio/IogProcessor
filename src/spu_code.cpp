@@ -25,7 +25,7 @@ SpuReturnCode spu_code_allocate (SpuCode_t *code, size_t newCapacity) {
 
   if (tmp_ptr == NULL) {
     fprintf(stderr, RED("ERROR: Can't recallocate code buffer!\n"));
-    return ERR_CANT_CODE_APPEND;
+    return ERR_CANT_APPEND;
   }
   
   code->buffer = tmp_ptr;
