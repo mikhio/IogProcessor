@@ -4,6 +4,7 @@
 #include "spu_cmd_ids.h"
 #include "spu_commands.h"
 #include "spu_label.h"
+#include "spu_constants.h"
 
 #include "cli_colors.h"
 #include "iog_assert.h"
@@ -51,9 +52,11 @@ SpuReturnCode spu_code_compile (const char *filename, SpuCode_t *code) {
         cmd_code_t cmdCode = GET_CMD_CODE(SPU_NONE_ARG_TYPE, SPU_CMDS[i].id);
 
         if (SPU_CMDS[i].argsNum == 1) {
-          cmdCode |= GET_ARG_TYPE( SPU_CMDS[i].handle_args(&text.lines[line], &num) );
+          if (SPU_CMDS[i].isJump == 1)
+            cmdCode |= GET_ARG_TYPE( SPU_CMDS[i].handle_args(&text.lines[line], &num, &labels) );
+          else
+            cmdCode |= GET_ARG_TYPE( SPU_CMDS[i].handle_args(&text.lines[line], &num, NULL) );
         }
-
 
         spu_code_append(code, (int) cmdCode);
 

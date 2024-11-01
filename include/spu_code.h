@@ -8,7 +8,6 @@
 #include <stdlib.h>
 
 const size_t CAPACITY_CHUNK = 100;
-const size_t MAX_WORD_NAME  = 100;
 
 struct SpuCode_t {
   int *buffer;

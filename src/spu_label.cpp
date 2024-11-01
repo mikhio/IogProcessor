@@ -1,5 +1,6 @@
 #include "spu_label.h"
 #include "spu_return_codes.h"
+#include "spu_constants.h"
 
 #include "cli_colors.h"
 #include "iog_memlib.h"
@@ -73,6 +74,19 @@ SpuReturnCode spu_labels_dump (const SpuLabels_t *labels) {
   fprintf(stderr, "\n");
 
   return SPU_OK;
+}
+
+SpuLabel_t *spu_find_label (const SpuLabels_t *labels, const char *name) {
+  IOG_ASSERT(labels);
+  IOG_ASSERT(name);
+
+  for (size_t i = 0; i < labels->size; i++) {
+    if (strcmp(labels->arr[i].name, name) == 0) {
+      return labels->arr + i;
+    }
+  }
+
+  return NULL;
 }
 
 static SpuReturnCode allocateMore (SpuLabels_t *labels, size_t chunkSize) {

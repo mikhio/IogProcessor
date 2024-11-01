@@ -6,8 +6,10 @@ push ax
 push bx
 add
 out
+
 start:
 push ax
 mul
 out
+jmp start:
 hlt

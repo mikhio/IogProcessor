@@ -1,18 +1,20 @@
 #include "spu_args_handlers.h"
 #include "spu_text_reader.h"
 #include "spu_cmd_ids.h"
+#include "spu_constants.h"
+#include "spu_label.h"
 
 #include "cli_colors.h"
 #include "iog_assert.h"
 
 #include <stdio.h>
 
-cmd_code_t handle_push_args (StrLine *line, int *num) {
+cmd_code_t handle_push_args (const StrLine *line, int *num, const SpuLabels_t *labels) {
   IOG_ASSERT(line);
   IOG_ASSERT(num);
 
-  char reg_name[10];
-  char cmd[10];
+  char reg_name[MAX_REG_NAME];
+  char cmd[MAX_REG_NAME];
 
   if (sscanf(line->line, "%s %d", cmd, num) == 2) {
     return SPU_DATA_TYPE;
@@ -26,12 +28,12 @@ cmd_code_t handle_push_args (StrLine *line, int *num) {
   return SPU_NONE_ARG_TYPE;
 }
 
-cmd_code_t handle_pop_args (StrLine *line, int *num) {
+cmd_code_t handle_pop_args  (const StrLine *line, int *num, const SpuLabels_t *labels) {
   IOG_ASSERT(line);
   IOG_ASSERT(num);
 
-  char reg_name[10];
-  char cmd[10];
+  char reg_name[MAX_REG_NAME];
+  char cmd[MAX_WORD_NAME];
 
   if (sscanf(line->line, "%s %s", cmd, reg_name) == 1) {
     fprintf(stderr, RED("SyntaxError: Can't find register after pop\n"));
@@ -46,7 +48,28 @@ cmd_code_t handle_pop_args (StrLine *line, int *num) {
   return SPU_REG_TYPE;
 }
 
-static SpuReturnCode convert_reg_name_to_num (char *reg_name, int *num) {
+cmd_code_t handle_jmp_args  (const StrLine *line, int *num, const SpuLabels_t *labels) {
+  IOG_ASSERT(line);
+  IOG_ASSERT(num);
+
+  char label_name[MAX_LABEL_NAME];
+  char cmd[MAX_WORD_NAME];
+
+  if (sscanf(line->line, "%s %s", cmd, label_name) == 1) {
+    fprintf(stderr, RED("SyntaxError: Can't find label after jmp\n"));
+    return SPU_NONE_ARG_TYPE;
+  }
+
+  SpuLabel_t *label = spu_find_label(labels, label_name);
+  if (label != NULL) {
+    *num = label->addr;
+    return SPU_DATA_TYPE;
+  }
+
+  return SPU_NONE_ARG_TYPE;
+}
+
+static SpuReturnCode convert_reg_name_to_num (const char *reg_name, int *num) {
   IOG_ASSERT(reg_name);
   IOG_ASSERT(num);
 
