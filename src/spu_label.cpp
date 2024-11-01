@@ -7,9 +7,10 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 
-SpuReturnCode spu_labels_init (SpuLabels_t *labels, size_t initSize) {
+SpuReturnCode spu_labels_init (SpuLabels_t *labels) {
   IOG_ASSERT(labels);
 
   labels->arr      = NULL;
@@ -24,7 +25,7 @@ SpuReturnCode spu_labels_init (SpuLabels_t *labels, size_t initSize) {
   return SPU_OK;
 }
 
-SpuReturnCode spu_labels_append (SpuLabels_t *labels, const SpuLabel_t *label) {
+SpuReturnCode spu_labels_append (SpuLabels_t *labels, const char *name, int addr) {
   IOG_ASSERT(labels);
 
   if (labels->size >= labels->capacity) {
@@ -34,8 +35,13 @@ SpuReturnCode spu_labels_append (SpuLabels_t *labels, const SpuLabel_t *label) {
     }
   }
 
-  labels->arr[labels->size].name = label->name;
-  labels->arr[labels->size].addr = label->addr;
+  if (strlen(name) > MAX_LABEL_NAME) {
+    fprintf(stderr, RED("AppendError: label name more than MAX_LABEL_NAME\n"));
+    return ERR_CANT_APPEND;
+  }
+
+  strcpy(labels->arr[labels->size].name, name);
+  labels->arr[labels->size].addr = addr;
   labels->size++;
 
   return SPU_OK;
@@ -47,6 +53,24 @@ SpuReturnCode spu_labels_free (SpuLabels_t *labels) {
   free(labels->arr);
   labels->size = 0;
   labels->capacity = 0;
+
+  return SPU_OK;
+}
+
+SpuReturnCode spu_labels_dump (const SpuLabels_t *labels) {
+  IOG_ASSERT(labels);
+
+  if (labels->arr == NULL) {
+    fprintf(stderr, BLACK("Lables: (NULL)\n"));
+    return SPU_OK;
+  } else {
+    fprintf(stderr, BLACK("Lables: (%p)\n"), labels->arr);
+  }
+
+  for (size_t i = 0; i < labels->size; i++) {
+    fprintf(stderr, BLACK("  label[%lu]: name = '%s', addr = %d\n"), i, labels->arr[i].name, labels->arr[i].addr);
+  }
+  fprintf(stderr, "\n");
 
   return SPU_OK;
 }
@@ -70,3 +94,4 @@ static SpuReturnCode allocateMore (SpuLabels_t *labels, size_t chunkSize) {
 
   return SPU_OK;
 }
+

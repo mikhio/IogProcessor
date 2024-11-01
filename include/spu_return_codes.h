@@ -19,8 +19,10 @@ enum SpuReturnCode {
   ERR_CANT_FILL_BUFFER = 13,
 
   ERR_CANT_HANDLE_ARG  = 14,
+  
+  ERR_INCORRECT        = 15,
 
-  NR_SPU_RETURN_CODE   = 15,
+  NR_SPU_RETURN_CODE   = 16,
 };
 
 
