@@ -17,12 +17,9 @@ enum SpuReturnCode {
   ERR_NO_OUTPUT_FILE   = 11,
   ERR_CANT_FILL_BUFFER = 12,
 
-  SPU_REG_TYPE         = 13,
-  SPU_NUM_TYPE         = 14,
+  ERR_CANT_HANDLE_ARG  = 13,
 
-  ERR_CANT_HANDLE_ARG  = 15,
-
-  NR_SPU_RETURN_CODE   = 16,
+  NR_SPU_RETURN_CODE   = 14,
 };
 
 

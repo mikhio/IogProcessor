@@ -19,7 +19,7 @@ SpuReturnCode spu_run (Spu_t *proc) {
   iog_stack_init(&proc->stack);
 
   proc->ip = 0;
-  SpuCmdId_t curCmd = SPU_NONE_ID;
+  cmd_code_t curCmd = GET_CMD_CODE(SPU_NONE_ARG_TYPE, SPU_NONE_ID);
   int cmdValue = 0;
 
   SpuReturnCode isRunning = SPU_OK;
@@ -27,26 +27,33 @@ SpuReturnCode spu_run (Spu_t *proc) {
   while (isRunning == SPU_OK) {
     isRunning = spu_read_cmd(proc, &curCmd, &cmdValue);
 
+    fprintf(stderr, BLUE("[EXECUTING] ") " cmd: %2d = (ARG) %2d + (CMD_ID) %2d, value: %d\n", 
+        curCmd,
+        GET_ARG_TYPE(curCmd),
+        GET_CMD_ID(curCmd),
+        cmdValue
+    );
+
     if (isRunning != SPU_OK)
       break;
 
     switch (curCmd) {
-      case SPU_PUSH_ID: {
+      case GET_CMD_CODE(SPU_DATA_TYPE, SPU_PUSH_ID): {
         iog_stack_push(&proc->stack, cmdValue);
 
         break;
       }
-      case SPU_PUSHR_ID: {
+      case GET_CMD_CODE(SPU_REG_TYPE, SPU_PUSH_ID): {
         iog_stack_push(&proc->stack, proc->regs[cmdValue]);
 
         break;
       }
-      case SPU_POP_ID: {
+      case GET_CMD_CODE(SPU_REG_TYPE, SPU_POP_ID): {
         iog_stack_pop(&proc->stack, proc->regs + cmdValue);
 
         break;
       }
-      case SPU_ADD_ID: {
+      case GET_CMD_CODE(SPU_NONE_ARG_TYPE, SPU_ADD_ID): {
         int firstValue = 0, secondValue = 0;
 
         iog_stack_pop(&proc->stack, &firstValue);
@@ -55,7 +62,7 @@ SpuReturnCode spu_run (Spu_t *proc) {
         iog_stack_push(&proc->stack, firstValue + secondValue);
         break;
       }
-      case SPU_MUL_ID: {
+      case GET_CMD_CODE(SPU_NONE_ARG_TYPE, SPU_MUL_ID): {
         int firstValue = 0, secondValue = 0;
 
         iog_stack_pop(&proc->stack, &firstValue);
@@ -64,7 +71,7 @@ SpuReturnCode spu_run (Spu_t *proc) {
         iog_stack_push(&proc->stack, firstValue * secondValue);
         break;
       }
-      case SPU_OUT_ID: {
+      case GET_CMD_CODE(SPU_NONE_ARG_TYPE, SPU_OUT_ID): {
         int value = 0;
 
         iog_stack_peek(&proc->stack, &value);
@@ -75,7 +82,7 @@ SpuReturnCode spu_run (Spu_t *proc) {
         printf("\n");
         break;
       }
-      case SPU_HLT_ID: {
+      case GET_CMD_CODE(SPU_NONE_ARG_TYPE, SPU_HLT_ID): {
         isRunning = SPU_QUIT;
         break;
       } case SPU_NONE_ID: {
@@ -94,7 +101,7 @@ SpuReturnCode spu_run (Spu_t *proc) {
   return SPU_OK;
 }
 
-SpuReturnCode spu_read_cmd(Spu_t *proc, SpuCmdId_t *curCmd, int *value) {
+SpuReturnCode spu_read_cmd(Spu_t *proc, cmd_code_t *curCmd, int *value) {
   IOG_ASSERT(proc);
   IOG_ASSERT(proc->code.buffer);
   IOG_ASSERT(curCmd);
@@ -103,12 +110,12 @@ SpuReturnCode spu_read_cmd(Spu_t *proc, SpuCmdId_t *curCmd, int *value) {
   if (proc->ip >= proc->code.bufSize)
     return SPU_QUIT;
 
-  *curCmd = (SpuCmdId_t) proc->code.buffer[proc->ip];
+  *curCmd = (cmd_code_t) proc->code.buffer[proc->ip];
   proc->ip++;
 
-  if ((*curCmd == SPU_PUSH_ID) || (*curCmd == SPU_POP_ID) || (*curCmd == SPU_PUSHR_ID)) {
+  if (GET_ARG_TYPE(*curCmd) != SPU_NONE_ARG_TYPE) {
     *value = proc->code.buffer[proc->ip];
-      proc->ip++;
+    proc->ip++;
   } else {
     *value = 0;
   }

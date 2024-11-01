@@ -19,7 +19,7 @@ struct Spu_t {
 
 
 SpuReturnCode spu_run      (Spu_t *proc);
-SpuReturnCode spu_read_cmd (Spu_t *proc, SpuCmdId_t *curCmd, int *value);
+SpuReturnCode spu_read_cmd (Spu_t *proc, cmd_code_t *curCmd, int *value);
 
 SpuReturnCode spu_free     (Spu_t *proc);
 

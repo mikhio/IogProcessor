@@ -1,6 +1,21 @@
 #ifndef SPU_CMD_IDS_H
 #define SPU_CMD_IDS_H
 
+typedef char cmd_code_t;
+
+
+const cmd_code_t SPU_CMD_ID_MSK    = 0b00011111;
+const cmd_code_t SPU_ARG_MSK       = 0b11100000;
+
+const cmd_code_t SPU_NONE_ARG_TYPE = 0b00000000;
+const cmd_code_t SPU_DATA_TYPE     = 0b00100000;
+const cmd_code_t SPU_REG_TYPE      = 0b01000000;
+const cmd_code_t SPU_ADDR_TYPE     = 0b10000000;
+
+#define GET_CMD_CODE(arg_type, cmd_id) ( (arg_type & SPU_ARG_MSK) | (cmd_id & SPU_CMD_ID_MSK) )
+#define GET_ARG_TYPE(cmd_code)         ( (cmd_code & SPU_ARG_MSK) )
+#define GET_CMD_ID(cmd_code)           ( (cmd_code & SPU_CMD_ID_MSK) )
+
 enum SpuCmdId_t {
   SPU_NONE_ID  = 0,
 
