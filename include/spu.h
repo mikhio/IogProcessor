@@ -11,6 +11,7 @@ const size_t SPU_REGS_NUM = 30;
 
 struct Spu_t {
   IogStack_t stack;
+  IogStack_t callStk;
   SpuCode_t  code;
 
   size_t     ip;

@@ -17,6 +17,7 @@ SpuReturnCode spu_run (Spu_t *proc) {
   IOG_ASSERT(proc);
 
   iog_stack_init(&proc->stack);
+  iog_stack_init(&proc->callStk);
 
   proc->ip = 0;
   cmd_code_t curCmd = GET_CMD_CODE(SPU_NONE_ARG_TYPE, SPU_NONE_ID);
@@ -140,6 +141,24 @@ SpuReturnCode spu_run (Spu_t *proc) {
 
         break;
       }
+      case GET_CMD_CODE(SPU_DATA_TYPE, SPU_CALL_ID):
+      {
+        iog_stack_push(&proc->callStk, proc->ip);
+        proc->ip = cmdValue;
+
+        break;
+      }
+      case GET_CMD_CODE(SPU_NONE_ARG_TYPE, SPU_RET_ID):
+      {
+        int callIP = 0;
+        if (iog_stack_pop(&proc->callStk, &callIP) != STACK_OK) {
+          fprintf(stderr, RED("RuntimeError: can't pop call's stack"));
+        } else {
+          proc->ip = callIP;
+        }
+
+        break;
+      }
       case GET_CMD_CODE(SPU_NONE_ARG_TYPE, SPU_ADD_ID):
       {
         int firstValue = 0, secondValue = 0;
@@ -190,6 +209,7 @@ SpuReturnCode spu_run (Spu_t *proc) {
   }
 
   iog_stack_destroy(&proc->stack);
+  iog_stack_destroy(&proc->callStk);
 
   return SPU_OK;
 }

@@ -1,13 +1,15 @@
 push  10
 pop   ax
 
+call printAx:
+
 push  ax
 push  11 
-jbe   printAx:
+add
 out
 hlt
 
 printAx:
   push ax
   out
-  hlt
+  ret
