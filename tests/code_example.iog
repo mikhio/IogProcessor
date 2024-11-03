@@ -7,9 +7,13 @@ push  ax
 push  11 
 add
 out
+push 10 
+outc
 hlt
 
 printAx:
   push ax
   out
+  push 10
+  outc
   ret

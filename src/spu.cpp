@@ -217,7 +217,15 @@ SpuReturnCode spu_run (Spu_t *proc) {
         iog_stack_peek(&proc->stack, &value);
 
         printf("%d", value);
-        printf("\n"); // TODO: remove after adding of ability to print char
+        break;
+      }
+      case GET_CMD_CODE(SPU_NONE_ARG_TYPE, SPU_OUTC_ID):
+      {
+        int value = 0;
+
+        iog_stack_peek(&proc->stack, &value);
+
+        printf("%c", (char) value);
         break;
       }
       case GET_CMD_CODE(SPU_NONE_ARG_TYPE, SPU_HLT_ID):
