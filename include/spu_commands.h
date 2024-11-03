@@ -12,16 +12,25 @@ struct SpuCmd_t {
   const int              isJump;
 };
 
-const int SPU_CMDS_AMOUNT = 7;
+const int SPU_CMDS_AMOUNT = 13;
 
 const SpuCmd_t SPU_CMDS[SPU_CMDS_AMOUNT] = {
-  {"push", SPU_PUSH_ID, 1, handle_push_args, 0},
-  {"pop",  SPU_POP_ID,  1, handle_pop_args,  0},
-  {"jmp",  SPU_JMP_ID,  1, handle_jmp_args,  1},
-  {"add",  SPU_ADD_ID,  0, NULL,             0},
-  {"mul",  SPU_MUL_ID,  0, NULL,             0},
-  {"out",  SPU_OUT_ID,  0, NULL,             0},
-  {"hlt",  SPU_HLT_ID,  0, NULL,             0},
+  {"push", SPU_PUSH_ID, 1, handle_push_args, 0}, // 1
+  {"pop",  SPU_POP_ID,  1, handle_pop_args,  0}, // 2
+
+  {"jmp",  SPU_JMP_ID,  1, handle_jmp_args,  1}, // 3
+  {"ja",   SPU_JA_ID,   1, handle_jmp_args,  1}, // 4
+  {"jae",  SPU_JAE_ID,  1, handle_jmp_args,  1}, // 5
+  {"jb",   SPU_JB_ID,   1, handle_jmp_args,  1}, // 6
+  {"jbe",  SPU_JBE_ID,  1, handle_jmp_args,  1}, // 7
+  {"je",   SPU_JE_ID,   1, handle_jmp_args,  1}, // 8
+  {"jne",  SPU_JNE_ID,  1, handle_jmp_args,  1}, // 9
+
+  {"add",  SPU_ADD_ID,  0, NULL,             0}, // 10
+  {"mul",  SPU_MUL_ID,  0, NULL,             0}, // 11
+
+  {"out",  SPU_OUT_ID,  0, NULL,             0}, // 12
+  {"hlt",  SPU_HLT_ID,  0, NULL,             0}, // 13
 };
 
 #endif // SPU_COMMANDS_H

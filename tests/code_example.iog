@@ -1,14 +1,13 @@
-push  12
-pop   ax 
-jmp start:
-push  25
-pop   bx
-push ax
-push bx
-add
-out
+push  10
+pop   ax
 
-start:
-push ax
+push  ax
+push  11 
+jbe   printAx:
 out
 hlt
+
+printAx:
+  push ax
+  out
+  hlt

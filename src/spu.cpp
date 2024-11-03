@@ -38,27 +38,110 @@ SpuReturnCode spu_run (Spu_t *proc) {
       break;
 
     switch (curCmd) {
-      case GET_CMD_CODE(SPU_DATA_TYPE, SPU_PUSH_ID): {
+      case GET_CMD_CODE(SPU_DATA_TYPE, SPU_PUSH_ID):
+      {
         iog_stack_push(&proc->stack, cmdValue);
 
         break;
       }
-      case GET_CMD_CODE(SPU_REG_TYPE, SPU_PUSH_ID): {
+      case GET_CMD_CODE(SPU_REG_TYPE, SPU_PUSH_ID):
+      {
         iog_stack_push(&proc->stack, proc->regs[cmdValue]);
 
         break;
       }
-      case GET_CMD_CODE(SPU_REG_TYPE, SPU_POP_ID): {
+      case GET_CMD_CODE(SPU_REG_TYPE, SPU_POP_ID):
+      {
         iog_stack_pop(&proc->stack, proc->regs + cmdValue);
 
         break;
       }
-      case GET_CMD_CODE(SPU_DATA_TYPE, SPU_JMP_ID): {
+      case GET_CMD_CODE(SPU_DATA_TYPE, SPU_JMP_ID):
+      {
         proc->ip = cmdValue;
 
         break;
       }
-      case GET_CMD_CODE(SPU_NONE_ARG_TYPE, SPU_ADD_ID): {
+      case GET_CMD_CODE(SPU_DATA_TYPE, SPU_JA_ID):
+      {
+        int firstValue = 0, secondValue = 0;
+
+        iog_stack_pop(&proc->stack, &firstValue);
+        iog_stack_pop(&proc->stack, &secondValue);
+
+        if (secondValue > firstValue) {
+          proc->ip = cmdValue;
+        }
+
+        break;
+      }
+      case GET_CMD_CODE(SPU_DATA_TYPE, SPU_JAE_ID):
+      {
+        int firstValue = 0, secondValue = 0;
+
+        iog_stack_pop(&proc->stack, &firstValue);
+        iog_stack_pop(&proc->stack, &secondValue);
+
+        if (secondValue >= firstValue) {
+          proc->ip = cmdValue;
+        }
+
+        break;
+      }
+      case GET_CMD_CODE(SPU_DATA_TYPE, SPU_JB_ID):
+      {
+        int firstValue = 0, secondValue = 0;
+
+        iog_stack_pop(&proc->stack, &firstValue);
+        iog_stack_pop(&proc->stack, &secondValue);
+
+        if (secondValue < firstValue) {
+          proc->ip = cmdValue;
+        }
+
+        break;
+      }
+      case GET_CMD_CODE(SPU_DATA_TYPE, SPU_JBE_ID):
+      {
+        int firstValue = 0, secondValue = 0;
+
+        iog_stack_pop(&proc->stack, &firstValue);
+        iog_stack_pop(&proc->stack, &secondValue);
+
+        if (secondValue <= firstValue) {
+          proc->ip = cmdValue;
+        }
+
+        break;
+      }
+      case GET_CMD_CODE(SPU_DATA_TYPE, SPU_JE_ID):
+      {
+        int firstValue = 0, secondValue = 0;
+
+        iog_stack_pop(&proc->stack, &firstValue);
+        iog_stack_pop(&proc->stack, &secondValue);
+
+        if (secondValue == firstValue) {
+          proc->ip = cmdValue;
+        }
+
+        break;
+      }
+      case GET_CMD_CODE(SPU_DATA_TYPE, SPU_JNE_ID):
+      {
+        int firstValue = 0, secondValue = 0;
+
+        iog_stack_pop(&proc->stack, &firstValue);
+        iog_stack_pop(&proc->stack, &secondValue);
+
+        if (secondValue != firstValue) {
+          proc->ip = cmdValue;
+        }
+
+        break;
+      }
+      case GET_CMD_CODE(SPU_NONE_ARG_TYPE, SPU_ADD_ID):
+      {
         int firstValue = 0, secondValue = 0;
 
         iog_stack_pop(&proc->stack, &firstValue);
@@ -67,7 +150,8 @@ SpuReturnCode spu_run (Spu_t *proc) {
         iog_stack_push(&proc->stack, firstValue + secondValue);
         break;
       }
-      case GET_CMD_CODE(SPU_NONE_ARG_TYPE, SPU_MUL_ID): {
+      case GET_CMD_CODE(SPU_NONE_ARG_TYPE, SPU_MUL_ID):
+      {
         int firstValue = 0, secondValue = 0;
 
         iog_stack_pop(&proc->stack, &firstValue);
@@ -76,7 +160,8 @@ SpuReturnCode spu_run (Spu_t *proc) {
         iog_stack_push(&proc->stack, firstValue * secondValue);
         break;
       }
-      case GET_CMD_CODE(SPU_NONE_ARG_TYPE, SPU_OUT_ID): {
+      case GET_CMD_CODE(SPU_NONE_ARG_TYPE, SPU_OUT_ID):
+      {
         int value = 0;
 
         iog_stack_peek(&proc->stack, &value);
@@ -87,14 +172,17 @@ SpuReturnCode spu_run (Spu_t *proc) {
         printf("\n");
         break;
       }
-      case GET_CMD_CODE(SPU_NONE_ARG_TYPE, SPU_HLT_ID): {
+      case GET_CMD_CODE(SPU_NONE_ARG_TYPE, SPU_HLT_ID):
+      {
         isRunning = SPU_QUIT;
         break;
-      } case SPU_NONE_ID: {
+      } case SPU_NONE_ID:
+      {
         fprintf(stderr, RED("ERROR: NONE command %d\n"), curCmd);
         break;
       }
-      default: {
+      default:
+      {
         fprintf(stderr, RED("ERROR: Unknown command %d\n"), curCmd);
         break;
       }
