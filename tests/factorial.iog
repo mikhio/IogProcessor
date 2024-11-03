@@ -1,0 +1,35 @@
+push -23 
+call factorial:
+out
+hlt
+
+
+factorial:
+  pop fx
+
+  push fx
+  push 0
+  jb f_err_return:
+
+  push fx
+  push 0
+  je f_1_return:
+
+  push fx
+
+  push fx
+  push 1
+  sub
+
+  call factorial:
+  mul
+  ret
+
+  f_err_return:
+  push -1
+  ret
+
+  f_1_return:
+  push 1
+  ret
+

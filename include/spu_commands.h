@@ -12,7 +12,7 @@ struct SpuCmd_t {
   const int              isJump;
 };
 
-const int SPU_CMDS_AMOUNT = 15;
+const int SPU_CMDS_AMOUNT = 17;
 
 const SpuCmd_t SPU_CMDS[SPU_CMDS_AMOUNT] = {
   {"push",  SPU_PUSH_ID, 1, handle_push_args, 0}, // 1
@@ -30,10 +30,12 @@ const SpuCmd_t SPU_CMDS[SPU_CMDS_AMOUNT] = {
   {"ret",   SPU_RET_ID,  0, NULL,             0}, // 11
 
   {"add",   SPU_ADD_ID,  0, NULL,             0}, // 12
-  {"mul",   SPU_MUL_ID,  0, NULL,             0}, // 13
+  {"sub",   SPU_SUB_ID,  0, NULL,             0}, // 13
+  {"mul",   SPU_MUL_ID,  0, NULL,             0}, // 14
+  {"div",   SPU_DIV_ID,  0, NULL,             0}, // 15
 
-  {"out",   SPU_OUT_ID,  0, NULL,             0}, // 14
-  {"hlt",   SPU_HLT_ID,  0, NULL,             0}, // 15
+  {"out",   SPU_OUT_ID,  0, NULL,             0}, // 16
+  {"hlt",   SPU_HLT_ID,  0, NULL,             0}, // 17
 };
 
 #endif // SPU_COMMANDS_H

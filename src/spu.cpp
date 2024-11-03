@@ -1,6 +1,6 @@
 #include "spu.h"
 #include "spu_code.h"
-
+#include "spu_commands.h"
 #include "spu_return_codes.h"
 #include "spu_cmd_ids.h"
 
@@ -28,11 +28,22 @@ SpuReturnCode spu_run (Spu_t *proc) {
   while (isRunning == SPU_OK) {
     isRunning = spu_read_cmd(proc, &curCmd, &cmdValue);
 
-    fprintf(stderr, BLUE("[EXECUTING] ") " cmd: %2d = (ARG) %2d + (CMD_ID) %2d, value: %d\n", 
+    const char *curCmdName = NULL;
+
+    for (size_t i = 0; i < SPU_CMDS_AMOUNT; i++) {
+      if (SPU_CMDS[i].id == GET_CMD_ID(curCmd)) {
+          curCmdName = SPU_CMDS[i].name;
+      }
+    }
+
+    fprintf(stderr, BLUE("[EXECUTING] ") " cmd: %2d = (ARG) %2d + (CMD_ID) %3d (%-5s%s), value: %3d, data: %3d\n",
         curCmd,
         GET_ARG_TYPE(curCmd),
         GET_CMD_ID(curCmd),
-        cmdValue
+        curCmdName,
+        (GET_ARG_TYPE(curCmd) == SPU_REG_TYPE) ? "r" : " ",
+        cmdValue,
+        (GET_ARG_TYPE(curCmd) == SPU_REG_TYPE) ? proc->regs[cmdValue] : cmdValue
     );
 
     if (isRunning != SPU_OK)
@@ -169,6 +180,16 @@ SpuReturnCode spu_run (Spu_t *proc) {
         iog_stack_push(&proc->stack, firstValue + secondValue);
         break;
       }
+      case GET_CMD_CODE(SPU_NONE_ARG_TYPE, SPU_SUB_ID):
+      {
+        int firstValue = 0, secondValue = 0;
+
+        iog_stack_pop(&proc->stack, &firstValue);
+        iog_stack_pop(&proc->stack, &secondValue);
+
+        iog_stack_push(&proc->stack, secondValue - firstValue);
+        break;
+      }
       case GET_CMD_CODE(SPU_NONE_ARG_TYPE, SPU_MUL_ID):
       {
         int firstValue = 0, secondValue = 0;
@@ -179,16 +200,24 @@ SpuReturnCode spu_run (Spu_t *proc) {
         iog_stack_push(&proc->stack, firstValue * secondValue);
         break;
       }
+      case GET_CMD_CODE(SPU_NONE_ARG_TYPE, SPU_DIV_ID):
+      {
+        int firstValue = 0, secondValue = 0;
+
+        iog_stack_pop(&proc->stack, &firstValue);
+        iog_stack_pop(&proc->stack, &secondValue);
+
+        iog_stack_push(&proc->stack, (int) (secondValue / firstValue));
+        break;
+      }
       case GET_CMD_CODE(SPU_NONE_ARG_TYPE, SPU_OUT_ID):
       {
         int value = 0;
 
         iog_stack_peek(&proc->stack, &value);
 
-        printf("-");
         printf("%d", value);
-        printf("-");
-        printf("\n");
+        printf("\n"); // TODO: remove after adding of ability to print char
         break;
       }
       case GET_CMD_CODE(SPU_NONE_ARG_TYPE, SPU_HLT_ID):

@@ -38,6 +38,9 @@ enum SpuCmdId_t {
   
   SPU_CALL_ID  = 15,
   SPU_RET_ID   = 16,
+
+  SPU_SUB_ID   = 17,
+  SPU_DIV_ID   = 18,
 };
 
 #endif // SPU_CMD_IDS_H
