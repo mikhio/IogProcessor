@@ -4,6 +4,7 @@
 enum SpuReturnCode {
   SPU_OK               = 0,
   SPU_QUIT             = 1,
+
   ERR_MANY_ARGUMENTS   = 2,
   ERR_CANT_OPEN_FILE   = 3,
   ERR_CANT_APPEND      = 4,
@@ -22,7 +23,9 @@ enum SpuReturnCode {
   
   ERR_INCORRECT        = 15,
 
-  NR_SPU_RETURN_CODE   = 16,
+  ERR_NOT_CHAR         = 16,
+
+  NR_SPU_RETURN_CODE   = 17,
 };
 
 

@@ -5,6 +5,8 @@
 
 const size_t MAX_WORD_NAME  = 100;
 const size_t MAX_REG_NAME   = 10;
+const size_t MAX_CMD_NAME   = 10;
+const size_t MAX_ARG_NAME   = 10;
 const size_t MAX_LABEL_NAME = 50;
 
 #endif // SPU_CONSTANTS_H

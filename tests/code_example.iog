@@ -1,4 +1,4 @@
-push  10
+push  11
 pop   ax
 
 call printAx:
@@ -7,13 +7,13 @@ push  ax
 push  11 
 add
 out
-push 10 
+push '\n'
 outc
 hlt
 
 printAx:
   push ax
   out
-  push 10
+  push '\n'
   outc
   ret
