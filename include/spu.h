@@ -8,6 +8,7 @@
 #include "iog_stack.h"
 
 const size_t SPU_REGS_NUM = 30;
+const size_t SPU_RAM_SIZE = 100000;
 
 struct Spu_t {
   IogStack_t stack;
@@ -16,6 +17,7 @@ struct Spu_t {
 
   size_t     ip;
   int        regs[SPU_REGS_NUM];
+  int        ram[SPU_RAM_SIZE];
 };
 
 

@@ -1,7 +1,7 @@
 #ifndef SPU_CMD_IDS_H
 #define SPU_CMD_IDS_H
 
-typedef char cmd_code_t;
+typedef int cmd_code_t;
 
 
 const cmd_code_t SPU_CMD_ID_MSK    = 0b00011111;

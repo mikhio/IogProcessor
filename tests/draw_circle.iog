@@ -1,0 +1,163 @@
+push 20 
+pop  ax
+
+push 8
+pop  bx
+
+push 24 
+pop hx
+
+push 60
+pop wx
+
+push 0
+pop xx
+
+push 0
+pop yx
+
+loop1:
+  push 0
+  pop xx
+
+loop2:
+  push xx
+  push wx
+  push 2
+  div
+  sub
+
+  push xx
+  push wx
+  push 2
+  div
+  sub
+
+  mul
+
+  push bx
+  push bx
+  mul
+  mul
+
+  push yx
+  push hx
+  push 2
+  div
+  sub
+
+  push yx
+  push hx
+  push 2
+  div
+  sub
+
+  mul
+  
+  push ax
+  push ax
+  mul
+  mul
+
+  add
+
+  push ax
+  push ax
+  mul
+  push bx
+  push bx
+  mul
+  mul
+
+  ja outside:
+  jbe inside:
+
+outside:
+  push yx
+  push wx
+  mul
+  push xx
+  add
+  pop vx
+  push '`'
+  pop [vx]
+  push [vx]
+  jmp next:
+
+inside:
+  push yx
+  push wx
+  mul
+  push xx
+  add
+  pop vx
+  push '*'
+  pop [vx]
+  jmp next:
+
+next:
+  push xx
+  push 1
+  add
+  pop xx
+
+  push xx
+  push wx
+  jb loop2:
+  
+  push yx
+  push 1
+  add
+  pop yx
+
+  push yx
+  push hx
+  jb loop1:
+
+call print:
+
+hlt
+
+
+print:
+  push 0
+  pop yx
+
+ploop1:
+  push 0
+  pop xx
+
+ploop2:
+  push yx
+  push wx
+  mul
+  push xx
+  add
+  pop vx
+
+  push [vx]
+  outc
+
+  push xx
+  push 1
+  add
+  pop xx
+
+  push xx
+  push wx
+  jb ploop2:
+  
+  push '\n'
+  outc
+
+  push yx
+  push 1
+  add
+  pop yx
+
+  push yx
+  push hx
+  jb ploop1:
+
+  ret
+

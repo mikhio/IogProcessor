@@ -23,7 +23,7 @@ enum SpuReturnCode {
   
   ERR_INCORRECT        = 15,
 
-  ERR_NOT_CHAR         = 16,
+  SPU_ERR              = 16,
 
   NR_SPU_RETURN_CODE   = 17,
 };

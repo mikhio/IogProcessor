@@ -13,6 +13,7 @@ cmd_code_t handle_pop_args  (const StrLine *line, int *num, const SpuLabels_t *l
 cmd_code_t handle_jmp_args  (const StrLine *line, int *num, const SpuLabels_t *labels);
 
 static SpuReturnCode convert_reg_name_to_num (const char *reg_name, int *num);
-static SpuReturnCode convert_char_to_num (const char *chr_str, int *num);
+static SpuReturnCode convert_char_to_num     (const char *chr_str,  int *num);
+static SpuReturnCode convert_ram_addr_to_num (const char *addr,     int *num, cmd_code_t *arg_type);
 
 #endif // SPU_ARGS_HANDLERS_H

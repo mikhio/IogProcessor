@@ -11,6 +11,7 @@
 #include "iog_memlib.h"
 
 #include <string.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
 
@@ -57,6 +58,8 @@ SpuReturnCode spu_code_compile (const char *filename, SpuCode_t *code) {
           else
             cmdCode |= GET_ARG_TYPE( SPU_CMDS[i].handle_args(&text.lines[line], &num, NULL) );
         }
+
+        fprintf(stderr, MAGENTA("[CMD_CODE] ")"%X %X\n", GET_ARG_TYPE(cmdCode), GET_CMD_ID(cmdCode));
 
         spu_code_append(code, (int) cmdCode);
 

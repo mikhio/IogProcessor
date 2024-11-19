@@ -36,7 +36,7 @@ SpuReturnCode spu_run (Spu_t *proc) {
       }
     }
 
-    fprintf(stderr, BLUE("[EXECUTING] ") " cmd: %2d = (ARG) %2d + (CMD_ID) %3d (%-5s%s), value: %3d, data: %3d\n",
+    fprintf(stderr, BLUE("[EXECUTING] ") " cmd: %3d = (ARG) %3d + (CMD_ID) %3d (%-5s%s), value: %3d, data: %3d\n",
         curCmd,
         GET_ARG_TYPE(curCmd),
         GET_CMD_ID(curCmd),
@@ -62,9 +62,33 @@ SpuReturnCode spu_run (Spu_t *proc) {
 
         break;
       }
+      case GET_CMD_CODE(SPU_ADDR_TYPE, SPU_PUSH_ID):
+      {
+        iog_stack_push(&proc->stack, proc->ram[cmdValue]);
+
+        break;
+      }
+      case GET_CMD_CODE(SPU_ADDR_TYPE | SPU_REG_TYPE, SPU_PUSH_ID):
+      {
+        iog_stack_push(&proc->stack, proc->ram[proc->regs[cmdValue]]);
+
+        break;
+      }
       case GET_CMD_CODE(SPU_REG_TYPE, SPU_POP_ID):
       {
         iog_stack_pop(&proc->stack, proc->regs + cmdValue);
+
+        break;
+      }
+      case GET_CMD_CODE(SPU_ADDR_TYPE, SPU_POP_ID):
+      {
+        iog_stack_pop(&proc->stack, proc->ram + cmdValue);
+
+        break;
+      }
+      case GET_CMD_CODE(SPU_ADDR_TYPE | SPU_REG_TYPE, SPU_POP_ID):
+      {
+        iog_stack_pop(&proc->stack, proc->ram + proc->regs[cmdValue]);
 
         break;
       }
